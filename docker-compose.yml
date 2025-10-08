@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  svca:
+    build: .
+    container_name: svca
+    environment:
+      SERVICE_NAME: "svca"
+      PEERS: "http://svcb:8001,http://svcc:8002"
+      PORT: "8000"
+    command: ["uvicorn","service.app:app","--host","0.0.0.0","--port","8000"]
+    ports: ["8000:8000"]
+
+  svcb:
+    build: .
+    container_name: svcb
+    environment:
+      SERVICE_NAME: "svcb"
+      PEERS: "http://svca:8000,http://svcc:8002"
+      PORT: "8001"
+    command: ["uvicorn","service.app:app","--host","0.0.0.0","--port","8001"]
+    ports: ["8001:8001"]
+
+  svcc:
+    build: .
+    container_name: svcc
+    environment:
+      SERVICE_NAME: "svcc"
+      PEERS: "http://svca:8000,http://svcb:8001"
+      PORT: "8002"
+    command: ["uvicorn","service.app:app","--host","0.0.0.0","--port","8002"]
+    ports: ["8002:8002"]
